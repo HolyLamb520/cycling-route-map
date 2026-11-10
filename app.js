@@ -2529,6 +2529,59 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
     }
     $('#export-svg')?.addEventListener('click', exportSVG);
     $('#export-png')?.addEventListener('click', exportPNG);
+    setupFullscreen();
+  }
+
+  function setupFullscreen() {
+    const shell = $('#map-shell');
+    const button = $('#map-fullscreen');
+    if (!shell || !button) return;
+    const icon = button.querySelector('span');
+    const update = () => {
+      const active = document.fullscreenElement === shell || shell.classList.contains('pseudo-fullscreen');
+      button.setAttribute('aria-pressed', String(active));
+      button.title = active ? '退出全屏' : '全屏显示地图';
+      button.setAttribute('aria-label', button.title);
+      if (icon) icon.textContent = active ? '⤢' : '⛶';
+      setTimeout(() => state.map?.invalidateSize(), 120);
+    };
+    const exitPseudo = () => {
+      shell.classList.remove('pseudo-fullscreen');
+      document.body.classList.remove('map-pseudo-fullscreen');
+      update();
+    };
+    button.addEventListener('click', async () => {
+      if (document.fullscreenElement === shell) {
+        try {
+          await document.exitFullscreen();
+        } catch (error) {
+          /* 浏览器拒绝时保持当前状态 */
+        }
+        return;
+      }
+      if (shell.classList.contains('pseudo-fullscreen')) {
+        exitPseudo();
+        return;
+      }
+      if (shell.requestFullscreen) {
+        try {
+          await shell.requestFullscreen();
+          update();
+          return;
+        } catch (error) {
+          /* 论坛沙箱或浏览器不允许时退回页面内全屏 */
+        }
+      }
+      shell.classList.add('pseudo-fullscreen');
+      document.body.classList.add('map-pseudo-fullscreen');
+      update();
+    });
+    document.addEventListener('fullscreenchange', update);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && shell.classList.contains('pseudo-fullscreen')) {
+        exitPseudo();
+      }
+    });
   }
 
   // ------------------------------------------------------------------ 导出

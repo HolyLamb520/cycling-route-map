@@ -418,6 +418,44 @@ button:disabled {
 
 #map-message.error { color: #9c3434; }
 
+.map-fullscreen {
+  position: absolute;
+  right: 14px;
+  bottom: 24px;
+  z-index: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  font: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.map-fullscreen:hover { background: var(--surface); }
+.map-fullscreen[aria-pressed="true"] { background: var(--surface); }
+
+#map-shell.pseudo-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--surface);
+}
+
+body.map-pseudo-fullscreen { overflow: hidden; }
+
+#map-shell:fullscreen {
+  background: var(--surface);
+}
+
 /* ---------------------------------------------------------------- 地图显示设置 */
 .map-panel {
   position: absolute;

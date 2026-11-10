@@ -17,6 +17,23 @@ body.forum-mode .project-head {
   padding-bottom: 4px;
 }
 
+/* 内嵌到论坛时，窄屏隐藏侧栏，让地图占满 iframe */
+@media (max-width: 1100px) {
+  body.forum-mode #app {
+    display: block;
+    height: 100%;
+  }
+
+  body.forum-mode #sidebar {
+    display: none;
+  }
+
+  body.forum-mode #map-shell {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
 body.forum-mode .project-note,
 body.forum-mode #project-note {
   margin-top: 2px;
