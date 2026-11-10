@@ -6,6 +6,10 @@
     const url = typeof input === 'string'
       ? input
       : (input && typeof input.url === 'string' ? input.url : '');
+    // 源清单没有压缩版，直接走原文件
+    if (/(?:^|\/)data\/sources\.json$/.test(url)) {
+      return originalFetch(input, init);
+    }
     if (/(?:^|\/)data\/[^?#]+\.(?:geojson|json)$/.test(url)) {
       try {
         const response = await originalFetch(`${url}.gz`, init);
