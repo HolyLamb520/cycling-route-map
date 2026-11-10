@@ -1,10 +1,12 @@
 **骑行路线图** · by HL
 
-这里收录 暑期路线，共 72 条路线。点击总览图或下方链接可以打开可缩放、可筛选的交互地图。
+这里收录 暑期路线，共 72 条路线。点击下方“打开交互地图”可以浏览可缩放、可筛选的地图。
 
 ## 路线总览
 
-[![骑行路线总览图](https://HolyLamb520.github.io/cycling-route-map/images/overview.png)](https://HolyLamb520.github.io/cycling-route-map/)
+![骑行路线总览图](https://HolyLamb520.github.io/cycling-route-map/images/overview.png)
+
+[打开交互地图](https://HolyLamb520.github.io/cycling-route-map/)
 
 ## 路线列表
 
