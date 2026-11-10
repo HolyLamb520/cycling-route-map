@@ -647,6 +647,11 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
       }
     }
     if (mapSetting) mapSetting.hidden = years.length < 2;
+    if (mapSelect && !mapSelect.value) {
+      // 默认选中最新一年，与 defaultSelection() 实际显示的路线保持一致
+      const latest = latestYear();
+      if (latest) mapSelect.value = String(latest);
+    }
   }
 
   function populateTimeline() {
