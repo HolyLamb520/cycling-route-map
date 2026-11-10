@@ -443,6 +443,11 @@ button:disabled {
 .map-fullscreen:hover { background: var(--surface); }
 .map-fullscreen[aria-pressed="true"] { background: var(--surface); }
 
+/* 桌面端侧栏已有数据源选择，地图面板里的重复项只在窄屏显示 */
+@media (min-width: 901px) {
+  body:not(.forum-mode) #map-source-setting { display: none !important; }
+}
+
 #map-shell.pseudo-fullscreen {
   position: fixed;
   inset: 0;

@@ -30,14 +30,21 @@
     return list.find((source) => source.id === manifest.default) || list[0];
   }
 
-  function options(manifest) {
-    if (!manifest || !Array.isArray(manifest.sources)) return [];
-    return manifest.sources.map((source) => ({
-      id: source.id,
-      label: `${source.id}${source.label && source.label !== source.id ? ` · ${source.label}` : ''}${source.error ? '（不可用）' : ''}`,
-      disabled: Boolean(source.error),
-    }));
+  function displayName(source) {
+    return String(source.display || source.id || '').replace(/_demo$/, '');
   }
 
-  return { pickSource, options };
+  function options(manifest) {
+    if (!manifest || !Array.isArray(manifest.sources)) return [];
+    return manifest.sources.map((source) => {
+      const name = displayName(source);
+      return {
+        id: source.id,
+        label: `${name}${source.label && source.label !== source.id ? ` · ${source.label}` : ''}${source.error ? '（不可用）' : ''}`,
+        disabled: Boolean(source.error),
+      };
+    });
+  }
+
+  return { pickSource, options, displayName };
 });

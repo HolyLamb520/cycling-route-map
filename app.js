@@ -120,31 +120,36 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
   function renderSourceSwitcher() {
     const wrap = $('#source-switch-wrap');
     const select = $('#source-switch');
-    if (!wrap || !select) return;
+    const mapWrap = $('#map-source-setting');
+    const mapSelect = $('#map-source-switch');
     const manifest = state.sourceManifest;
     const current = state.sourceEntry;
-    if (!manifest || manifest.sources.length < 2) {
-      wrap.hidden = true;
-      return;
-    }
-    wrap.hidden = false;
-    select.innerHTML = '';
-    for (const item of window.SourcePicker.options(manifest)) {
-      const option = document.createElement('option');
-      option.value = item.id;
-      option.textContent = item.label;
-      option.disabled = item.disabled;
-      select.appendChild(option);
-    }
-    select.value = current ? current.id : (manifest.default || '');
-    if (!select.dataset.bound) {
-      select.dataset.bound = '1';
-      select.addEventListener('change', () => {
-        // 整页重载，避免上一个源已加载的年份、边界与选择状态残留
-        const url = new URL(window.location.href);
-        url.searchParams.set('source', select.value);
-        window.location.href = url.toString();
-      });
+    const multiple = Boolean(manifest && manifest.sources.length >= 2);
+    if (wrap) wrap.hidden = !multiple;
+    if (mapWrap) mapWrap.hidden = !multiple;
+    if (!multiple) return;
+
+    const options = window.SourcePicker.options(manifest);
+    for (const node of [select, mapSelect]) {
+      if (!node) continue;
+      node.innerHTML = '';
+      for (const item of options) {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.label;
+        option.disabled = item.disabled;
+        node.appendChild(option);
+      }
+      node.value = current ? current.id : (manifest.default || '');
+      if (!node.dataset.bound) {
+        node.dataset.bound = '1';
+        node.addEventListener('change', () => {
+          // 整页重载，避免上一个源已加载的年份、边界与选择状态残留
+          const url = new URL(window.location.href);
+          url.searchParams.set('source', node.value);
+          window.location.href = url.toString();
+        });
+      }
     }
   }
 
