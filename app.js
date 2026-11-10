@@ -2088,8 +2088,9 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
     const panel = $('#map-panel');
     if (panel && !panel.dataset.initialized) {
       panel.dataset.initialized = '1';
-      // 窄屏默认折叠，避免遮住大部分地图
-      if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) {
+      // 窄屏默认折叠，避免遮住大部分地图；论坛内嵌时保持展开，方便切数据源和年份
+      if (window.matchMedia && window.matchMedia('(max-width: 900px)').matches
+          && !document.body.classList.contains('forum-mode')) {
         setMapPanelCollapsed(true);
       }
     }
