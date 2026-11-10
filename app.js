@@ -391,7 +391,9 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
   }
 
   function storageKey() {
-    return STORAGE_PREFIX + (state.meta.project.title || 'default');
+    const title = state.meta?.project?.title || 'default';
+    const source = state.meta?.source?.id || '';
+    return `${STORAGE_PREFIX}${title}:${source}`;
   }
 
   function tripYear(tripOrName) {
