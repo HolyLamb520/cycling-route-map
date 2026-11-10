@@ -523,6 +523,15 @@ body.map-pseudo-fullscreen { overflow: hidden; }
   color: var(--ink-secondary);
 }
 
+.map-setting select {
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  font-size: 11.5px;
+  padding: 5px 7px;
+  border-radius: 7px;
+}
+
 .map-setting input[type="range"] {
   width: 100%;
   margin: 6px 0 0;
