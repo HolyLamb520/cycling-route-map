@@ -445,7 +445,8 @@ button:disabled {
 
 /* 桌面端侧栏已有数据源选择，地图面板里的重复项只在窄屏显示 */
 @media (min-width: 901px) {
-  body:not(.forum-mode) #map-source-setting { display: none !important; }
+  body:not(.forum-mode) #map-source-setting,
+  body:not(.forum-mode) #map-year-setting { display: none !important; }
 }
 
 #map-shell.pseudo-fullscreen {

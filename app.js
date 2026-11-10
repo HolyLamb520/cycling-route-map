@@ -632,16 +632,21 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
 
   function populateYearFilter() {
     const select = $('#year-filter');
-    if (!select) return;
+    const mapSelect = $('#map-year-filter');
+    const mapSetting = $('#map-year-setting');
     const years = [...new Set((state.meta?.trips || []).map((trip) => tripYear(trip)).filter(Boolean))].map(String).sort().reverse();
     state.years = years;
-    select.innerHTML = '<option value="">全部年份</option>';
-    for (const year of years) {
-      const option = document.createElement('option');
-      option.value = year;
-      option.textContent = year;
-      select.appendChild(option);
+    for (const node of [select, mapSelect]) {
+      if (!node) continue;
+      node.innerHTML = '<option value="">全部年份</option>';
+      for (const year of years) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        node.appendChild(option);
+      }
     }
+    if (mapSetting) mapSetting.hidden = years.length < 2;
   }
 
   function populateTimeline() {
@@ -733,7 +738,9 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
   function applyYearFilter(year, selectRoutes = false) {
     state.filters.year = year || '';
     const select = $('#year-filter');
-    if (select.value !== state.filters.year) select.value = state.filters.year;
+    if (select && select.value !== state.filters.year) select.value = state.filters.year;
+    const mapSelect = $('#map-year-filter');
+    if (mapSelect && mapSelect.value !== state.filters.year) mapSelect.value = state.filters.year;
     const slider = $('#year-slider');
     if (slider) {
       const index = state.filters.year ? state.years.indexOf(state.filters.year) + 1 : 0;
@@ -2480,6 +2487,12 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
     $('#year-filter').addEventListener('change', (event) => {
       applyYearFilter(event.target.value, false);
     });
+    const mapYearFilter = $('#map-year-filter');
+    if (mapYearFilter) {
+      mapYearFilter.addEventListener('change', (event) => {
+        applyYearFilter(event.target.value, true);
+      });
+    }
     $('#year-slider').addEventListener('input', (event) => {
       const index = Number(event.target.value);
       const year = index > 0 ? state.years[index - 1] : '';
