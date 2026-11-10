@@ -57,7 +57,6 @@
           </div>
           <div class="setting-actions">
             <button type="button" class="ghost" id="toggle-days" aria-pressed="true">隐藏天数</button>
-            <button type="button" class="ghost" id="toggle-qa" aria-pressed="false">质量检查</button>
           </div>
           <div class="timeline-row">
             <label for="year-slider">年份</label>
@@ -86,20 +85,6 @@
             <div id="team-legend" class="team-legend" role="group" aria-label="按团别快捷筛选"></div>
           </div>
           <div id="year-legend" class="year-legend" aria-label="年份颜色图例"></div>
-          <div class="qa-row">
-            <select id="qa-filter" aria-label="按数据质量筛选">
-              <option value="">质量：全部</option>
-              <option value="low-confidence">低置信度地点</option>
-              <option value="long-segment">超长节点段</option>
-              <option value="endpoint-offset">端点偏差</option>
-              <option value="imported">FIT/GPX 导入</option>
-            </select>
-          </div>
-          <div id="qa-legend" class="qa-legend" hidden>
-            <span class="qa-dot low"></span>低置信度
-            <span class="qa-dot long"></span>超长段
-            <span class="qa-dot offset"></span>端点偏差
-          </div>
           <section id="trip-list" class="trip-list"></section>
         </section>
 
@@ -114,11 +99,6 @@
             </table>
           </div>
         </details>
-
-        <section class="actions">
-          <button type="button" class="primary" id="export-svg">导出 SVG</button>
-          <button type="button" class="ghost" id="export-png">导出 PNG</button>
-        </section>
 
         <section id="warnings" class="warnings" hidden></section>
 
@@ -178,8 +158,6 @@
           <button type="button" class="ghost" id="route-prev">上一天</button>
           <button type="button" class="ghost" id="route-only">只看这天</button>
           <button type="button" class="ghost" id="route-next">下一天</button>
-          <button type="button" class="ghost" id="route-copy">复制坐标</button>
-          <a id="route-gpx" class="ghost route-gpx" href="#" target="_blank" rel="noopener">GPX</a>
         </div>
         <div class="profile-wrap">
           <div class="profile-head"><span>海拔剖面</span><span id="profile-range"></span></div>

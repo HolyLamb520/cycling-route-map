@@ -1063,8 +1063,10 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
 
   function updateExportState() {
     const disabled = state.selection.size === 0;
-    $('#export-svg').disabled = disabled;
-    $('#export-png').disabled = disabled;
+    const exportSvg = $('#export-svg');
+    const exportPng = $('#export-png');
+    if (exportSvg) exportSvg.disabled = disabled;
+    if (exportPng) exportPng.disabled = disabled;
   }
 
   // ------------------------------------------------------------------ 地图
@@ -2491,7 +2493,7 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
       state.showDayNumbers = !state.showDayNumbers;
       applyDayVisibility(true);
     });
-    $('#toggle-qa').addEventListener('click', () => {
+    $('#toggle-qa')?.addEventListener('click', () => {
       state.qaMode = !state.qaMode;
       $('#toggle-qa').setAttribute('aria-pressed', String(state.qaMode));
       const legend = $('#qa-legend');
@@ -2499,7 +2501,7 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
       rebuildRouteLayers();
       renderMapLegend();
     });
-    $('#qa-filter').addEventListener('change', (event) => {
+    $('#qa-filter')?.addEventListener('change', (event) => {
       state.filters.qa = event.target.value;
       renderTripList();
     });
@@ -2518,15 +2520,15 @@ import { renderMapSVG, renderMinimalMapSVG } from './js/export.js';
       state.selection = new Set([state.activeRouteId]);
       afterSelectionChange();
     });
-    $('#route-copy').addEventListener('click', copyActiveCoords);
+    $('#route-copy')?.addEventListener('click', copyActiveCoords);
     const dataTable = $('#data-table');
     if (dataTable) {
       dataTable.addEventListener('toggle', () => {
         if (dataTable.open) updateDataTable();
       });
     }
-    $('#export-svg').addEventListener('click', exportSVG);
-    $('#export-png').addEventListener('click', exportPNG);
+    $('#export-svg')?.addEventListener('click', exportSVG);
+    $('#export-png')?.addEventListener('click', exportPNG);
   }
 
   // ------------------------------------------------------------------ 导出
