@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5ee">
+  <title>骑行路线图</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="forum.css">
+</head>
+<body class="forum-mode">
+  <div id="app">
+    <aside id="sidebar">
+      <div class="sidebar-inner">
+        <header class="project-head">
+          <div class="project-title-row">
+            <h1 id="project-title">骑行路线图</h1>
+          </div>
+          <p id="project-subtitle" class="subtitle"></p>
+          <p id="project-note" class="hint"></p>
+          <label id="source-switch-wrap" class="source-switch" hidden>
+            <span>数据源</span>
+            <select id="source-switch" aria-label="切换数据源"></select>
+          </label>
+          <p id="source-note" class="hint"></p>
+        </header>
+
+        <section class="stats" aria-label="选中路线统计">
+          <div class="stat">
+            <span class="stat-label">里程</span>
+            <span class="stat-value"><span id="stat-km">–</span><span class="stat-unit">km</span></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">爬升</span>
+            <span class="stat-value"><span id="stat-up">–</span><span class="stat-unit">m</span></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">天数</span>
+            <span class="stat-value"><span id="stat-days">–</span><span class="stat-unit">天</span></span>
+          </div>
+        </section>
+
+        <section class="settings-card" aria-label="显示设置">
+          <div class="section-heading"><span>显示设置</span></div>
+          <div class="setting-grid">
+            <label for="basemap">底图</label>
+            <select id="basemap"></select>
+            <label for="boundary-mode">行政区划</label>
+            <select id="boundary-mode">
+              <option value="local">仅经过市（市界，含台湾）</option>
+              <option value="nation_cities">全国（市界）</option>
+              <option value="nation">全国（省界）</option>
+              <option value="none">不显示</option>
+            </select>
+          </div>
+          <div class="setting-actions">
+            <button type="button" class="ghost" id="toggle-days" aria-pressed="true">隐藏天数</button>
+            <button type="button" class="ghost" id="toggle-qa" aria-pressed="false">质量检查</button>
+          </div>
+          <div class="timeline-row">
+            <label for="year-slider">年份</label>
+            <input type="range" id="year-slider" aria-label="按年份浏览">
+            <span id="timeline-label" class="timeline-label">全部</span>
+          </div>
+        </section>
+
+        <section class="routes-section" aria-label="路线列表">
+          <div class="section-heading routes-heading">
+            <span>路线</span>
+            <span id="route-summary" class="section-meta"></span>
+            <button type="button" class="section-action" id="collapse-all">全部折叠</button>
+          </div>
+          <div class="controls route-controls">
+            <button type="button" class="ghost" id="select-all">全选</button>
+            <button type="button" class="ghost" id="select-none">全不选</button>
+            <button type="button" class="ghost" id="zoom-selected">缩放到选中</button>
+          </div>
+          <div class="route-filters">
+            <select id="year-filter" aria-label="按年份筛选路线"><option value="">全部年份</option></select>
+            <input id="route-search" type="search" placeholder="搜索团名 / 年份 / 地点" aria-label="搜索路线">
+          </div>
+          <div class="team-filter">
+            <span class="team-filter-label">团别</span>
+            <div id="team-legend" class="team-legend" role="group" aria-label="按团别快捷筛选"></div>
+          </div>
+          <div id="year-legend" class="year-legend" aria-label="年份颜色图例"></div>
+          <div class="qa-row">
+            <select id="qa-filter" aria-label="按数据质量筛选">
+              <option value="">质量：全部</option>
+              <option value="low-confidence">低置信度地点</option>
+              <option value="long-segment">超长节点段</option>
+              <option value="endpoint-offset">端点偏差</option>
+              <option value="imported">FIT/GPX 导入</option>
+            </select>
+          </div>
+          <div id="qa-legend" class="qa-legend" hidden>
+            <span class="qa-dot low"></span>低置信度
+            <span class="qa-dot long"></span>超长段
+            <span class="qa-dot offset"></span>端点偏差
+          </div>
+          <section id="trip-list" class="trip-list"></section>
+        </section>
+
+        <details class="data-table" id="data-table">
+          <summary>数据表</summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>日</th><th>起终点</th><th>里程</th><th>爬升</th></tr>
+              </thead>
+              <tbody id="data-table-body"></tbody>
+            </table>
+          </div>
+        </details>
+
+        <section class="actions">
+          <button type="button" class="primary" id="export-svg">导出 SVG</button>
+          <button type="button" class="ghost" id="export-png">导出 PNG</button>
+        </section>
+
+        <section id="warnings" class="warnings" hidden></section>
+
+        <footer class="sidebar-foot">
+          <p id="attribution"></p>
+        </footer>
+      </div>
+    </aside>
+
+    <main id="map-shell">
+      <div id="map" role="application" aria-label="骑行路线地图"></div>
+      <div id="map-message">正在加载地图数据…</div>
+      <aside id="map-panel" class="map-panel" aria-label="地图显示设置与图例">
+        <button type="button" id="map-panel-toggle" class="map-panel-toggle" aria-expanded="true" aria-controls="map-panel-body">显示设置与图例 <span aria-hidden="true">▾</span></button>
+        <div id="map-panel-body" class="map-panel-body">
+          <div class="map-setting">
+            <label for="line-width">轨迹粗细 <span id="line-width-value">3</span></label>
+            <input type="range" id="line-width" min="1" max="20" step="0.5" value="3" aria-label="轨迹粗细">
+          </div>
+          <div class="map-setting-grid">
+            <label for="color-by">配色依据</label>
+            <select id="color-by" aria-label="配色依据">
+              <option value="default">默认（构建配色）</option>
+              <option value="year">按年份</option>
+              <option value="team">按团别</option>
+            </select>
+            <label for="color-scheme">配色方案</label>
+            <select id="color-scheme" aria-label="配色方案">
+              <option value="contrast">高对比（同组路线拉开）</option>
+              <option value="family">同色系（同组相近，跨组拉开）</option>
+            </select>
+          </div>
+          <p class="map-hint">同色系：同一年/同一团内颜色接近，跨年/跨团差异明显；高对比：同一年/同一团内不同路线颜色拉开。</p>
+          <label class="map-switch"><input type="checkbox" id="show-mode-styles" checked> 显示路段模式线型（关闭后全部实线）</label>
+          <label class="map-switch"><input type="checkbox" id="overlap-bands" checked> 重合路径彩带</label>
+          <div class="map-setting">
+            <label for="overlap-cycle">彩带周期 <span id="overlap-cycle-value">10 px</span></label>
+            <input type="range" id="overlap-cycle" min="4" max="30" step="1" value="10" aria-label="重合彩带周期">
+          </div>
+          <p class="map-hint">悬停某段颜色可查看对应路线，点击打开路线卡。重合路线数量不设上限；质量检查开启或可见路线超过 300 条时暂停。只影响地图显示，不写入数据。</p>
+          <div class="map-actions">
+            <button type="button" class="ghost mini" id="map-select-all">全选所有路线</button>
+            <button type="button" class="ghost mini" id="map-select-none">全不选</button>
+          </div>
+          <div class="map-legend-head"><span>当前显示</span><span id="map-legend-count" class="map-legend-count"></span></div>
+          <div id="map-legend" class="map-legend" aria-live="polite"></div>
+        </div>
+      </aside>
+      <aside id="route-card" class="route-card" hidden aria-live="polite">
+        <button type="button" id="route-card-close" class="route-card-close" aria-label="关闭路线信息">×</button>
+        <p id="route-card-kicker" class="route-card-kicker"></p>
+        <h2 id="route-card-title"></h2>
+        <p id="route-card-sub" class="route-card-sub"></p>
+        <div id="route-card-stats" class="route-card-stats"></div>
+        <p id="route-card-note" class="route-card-note"></p>
+        <div class="route-card-actions">
+          <button type="button" class="ghost" id="route-prev">上一天</button>
+          <button type="button" class="ghost" id="route-only">只看这天</button>
+          <button type="button" class="ghost" id="route-next">下一天</button>
+          <button type="button" class="ghost" id="route-copy">复制坐标</button>
+          <a id="route-gpx" class="ghost route-gpx" href="#" target="_blank" rel="noopener">GPX</a>
+        </div>
+        <div class="profile-wrap">
+          <div class="profile-head"><span>海拔剖面</span><span id="profile-range"></span></div>
+          <svg id="profile-chart" class="profile-chart" viewBox="0 0 300 86" preserveAspectRatio="none" aria-label="海拔剖面"></svg>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="js/source-picker.js"></script>
+  <script src="js/palette.js"></script>
+  <script src="js/overlap.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

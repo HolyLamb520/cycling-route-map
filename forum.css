@@ -1,0 +1,23 @@
+/* 论坛发布页：只保留地图浏览与路线信息，隐藏编辑、导出、QA 等入口。 */
+body.forum-mode .manage-link,
+body.forum-mode #source-switch-wrap,
+body.forum-mode #source-note,
+body.forum-mode #toggle-qa,
+body.forum-mode .qa-row,
+body.forum-mode #qa-legend,
+body.forum-mode .actions,
+body.forum-mode #route-gpx,
+body.forum-mode #route-copy,
+body.forum-mode .sidebar-foot .hint,
+body.forum-mode #warnings {
+  display: none !important;
+}
+
+body.forum-mode .project-head {
+  padding-bottom: 4px;
+}
+
+body.forum-mode .project-note,
+body.forum-mode #project-note {
+  margin-top: 2px;
+}
